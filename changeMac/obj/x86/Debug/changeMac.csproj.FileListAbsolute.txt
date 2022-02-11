@@ -1,0 +1,8 @@
+C:\Users\User\AppData\Local\Temporary Projects\changeMac\bin\Debug\changeMac.exe
+C:\Users\User\AppData\Local\Temporary Projects\changeMac\bin\Debug\changeMac.pdb
+C:\Users\User\AppData\Local\Temporary Projects\changeMac\obj\x86\Debug\changeMac.exe
+C:\Users\User\AppData\Local\Temporary Projects\changeMac\obj\x86\Debug\changeMac.pdb
+Y:\dev\csharp\changeMac\changeMac\obj\x86\Debug\changeMac.exe
+Y:\dev\csharp\changeMac\changeMac\obj\x86\Debug\changeMac.pdb
+Y:\dev\csharp\changeMac\changeMac\bin\Debug\changeMac.exe
+Y:\dev\csharp\changeMac\changeMac\bin\Debug\changeMac.pdb
