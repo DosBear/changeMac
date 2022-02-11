@@ -11,9 +11,6 @@ namespace changeMac
 {
     class Program
     {
-        static IPGlobalProperties boxProperties = IPGlobalProperties.GetIPGlobalProperties();
-        static NetworkInterface[] netList = NetworkInterface.GetAllNetworkInterfaces();
-
         static void Main(string[] args)
         {
             "changeMac {0} \r\n".ShowText(Const.App.VERSION);
@@ -21,10 +18,10 @@ namespace changeMac
             "Список найденных интерфейсов:".ShowInfo();
             int cnt = 0;
             Dictionary<int, NetworkInterface> dicNet = new Dictionary<int, NetworkInterface>();
-            foreach (NetworkInterface item in netList)
+            foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
             {
                 cnt++;
-                "[{0}] {1} MAC {2}".ShowText(cnt.ToString(), item.Name, item.GetPhysicalAddress().ToString());
+                "[{0}] {1} MAC {2}".ShowText(cnt.ToString(), item.Description, item.GetPhysicalAddress().ToString());
                 dicNet.Add(cnt, item);
             }
             
@@ -50,8 +47,12 @@ namespace changeMac
                             if (regnic.GetValue("NetCfgInstanceID").ToString() == dicNet[current].Id)
                             {
                                 regnic.SetValue("NetworkAddress", newMac);
-                                "Mac-адрес успешно прописан".ShowGreen();
-                                break;
+                                "Mac-адрес {0} успешно прописан для {1}".ShowGreen(newMac, subKeyName);
+                                "Выполняется перезагрузка адаптера".ShowText();
+                                reloadAdapter(dicNet[current].Description);
+                                "Адаптер перзагружен. Сведения обновлены".ShowText();
+
+                                return;
                             }
                         }
 
@@ -73,16 +74,28 @@ namespace changeMac
                 "Ошибка в введенных данных. Операция отменена".ShowError();
             }
 
-            Console.ReadLine();
         }
 
-        public static string GetNewMac()
+        private static string GetNewMac()
         {
             var random = new Random();
             var buffer = new byte[6];
             random.NextBytes(buffer);
             var result = String.Concat(buffer.Select(x => string.Format("{0}", x.ToString("X2"))).ToArray());
             return result;
+        }
+
+        private static void reloadAdapter(string adaperName)
+        {
+            ManagementObject mobj = new ManagementObject();
+            ObjectQuery query = new System.Management.ObjectQuery(Const.App.SQL_GETADAPTER.FormatWith(adaperName));
+            ManagementObjectSearcher search = new ManagementObjectSearcher(query);
+            ManagementObjectCollection coladapters = search.Get();
+            foreach (ManagementObject item in coladapters)
+            {
+                item.InvokeMethod("Disable", null);
+                item.InvokeMethod("Enable", null);
+            }
         }
     }
 }
